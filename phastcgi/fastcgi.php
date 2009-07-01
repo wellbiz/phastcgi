@@ -1,27 +1,46 @@
 <?
+
+define(FCGI_BEGIN_REQUEST, 1);
+define(FCGI_ABORT_REQUEST, 2);
+define(FCGI_END_REQUEST, 3);
+define(FCGI_PARAMS, 4);
+define(FCGI_STDIN, 5);
+define(FCGI_STDOUT, 6);
+define(FCGI_STDERR, 7);
+define(FCGI_DATA, 8);
+define(FCGI_GET_VALUES, 9);
+define(FCGI_GET_VALUES_RESULT , 10);
+define(FCGI_UNKNOWN_TYPE, 11);
+define(FCGI_MAXTYPE, FCGI_UNKNOWN_TYPE);
+define(FCGI_NULL_REQUEST_ID, 0);
+define(FCGI_KEEP_CONN, 1);
+
+define(FCGI_RESPONDER, 1);
+define(FCGI_AUTHORIZER, 2);
+define(FCGI_FILTER, 3);
+define(FCGI_REQUEST_COMPLETE, 0);
+define(FCGI_CANT_MPX_CONN, 1);
+define(FCGI_OVERLOADED, 2);
+define(FCGI_UNKNOWN_ROLE, 3);       
+
+class FastCGIRecord
+{
+    public function __construct($s)
+    {
+        $data = socket_read($s, 8);
+        $this->type = ord($data[1]);
+        $this->requestId = ord($data[2]) * 256 + ord($data[3]);
+        $this->contentLength = ord($data[4]) * 256 + ord($data[5]);
+        $this->paddingLength = ord($data[6]);
+    }
+}
+
 class FastCGIRequest
 {
     public function __construct($s)
     {
-        $br = socket_read($s, 24);
-
-/*
-            unsigned char version; // 0
-            unsigned char type; // 1
-            unsigned char requestIdB1; // 2
-            unsigned char requestIdB0; // 3
-*/
-        $content_length_ = ord($br[4]) * 16 + ord($br[5]);
-        $padding_length_ = ord($br[6]);
-
-/*
-            unsigned char contentLengthB1; // 4
-            unsigned char contentLengthB0; // 5
-            unsigned char paddingLength; // 6
-            unsigned char reserved; // 7
-            unsigned char contentData[contentLength];
-            unsigned char paddingData[paddingLength];
-*/
+        $rec = new FastCGIRecord($s);
+        var_dump($rec);
 
         $content_length = ord($br[20]) * 256 + ord($br[21]);
 

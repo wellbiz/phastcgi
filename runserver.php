@@ -14,11 +14,13 @@ chmod($sn, 0777);
 while($conn = socket_accept($s))
 {
     $request = new FastCGIRequest($conn);
+
     foreach($middlewares as $middleware)
     {
-        var_dump($request);
-        $middleware->BeforeRequest($request);
+        $response = $middleware->BeforeRequest($request);
+        print $response;
     }
+
 }
 
 
