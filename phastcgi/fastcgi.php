@@ -75,11 +75,11 @@ class FastCGIRequest
 {
     public function __construct($s)
     {
-        $rec = new FastCGIRecord($s);
-        var_dump($rec);
-        $rec = new FastCGIRecord($s);
-        var_dump($rec);
-     }
+        do {
+            $rec = new FastCGIRecord($s);
+            var_dump($rec);
+        } while ($rec->type != FCGI_STDIN);
+    }
 }
 
 
