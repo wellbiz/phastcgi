@@ -19,14 +19,14 @@ while($conn = socket_accept($s))
 
     $rec = new FastCGIRecord($conn);
     $rec->type = FCGI_STDOUT;
-    $rec->add_data("Content-type: text/plain\r\n\r\n");
-    $rec->write($conn);
+    $rec->add_data("Content-type: text/plain\r\n\r\nhello world");
+    $rec->write();
 
     $rec = new FastCGIRecord($conn);
     $rec->type = FCGI_STDOUT;
-    $rec->write($conn);
+    $rec->write();
 
     $rec = new FastCGIRecord($conn);
     $rec->type = FCGI_END_REQUEST;
-    $rec->write($conn);
+    $rec->write();
 }
