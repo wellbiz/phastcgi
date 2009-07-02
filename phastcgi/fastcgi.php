@@ -107,9 +107,12 @@ class FastCGIRequest
 {
     public function __construct($s)
     {
+        $this->headers = array();
         do {
             $rec = new FastCGIRecord();
             $rec->read($s);
+            if(is_array($rec->params))
+                $this->headers = array_merge($this->headers, $rec->params);
         } while ($rec->type != FCGI_STDIN);
     }
 }
