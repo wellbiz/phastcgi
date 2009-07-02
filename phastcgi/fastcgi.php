@@ -42,8 +42,8 @@ class FastCGIRecord
     {
         $data = socket_read($s, 8);
         $this->type = ord($data[1]);
-        $this->requestId = ord($data[2]) * 256 + ord($data[3]);
-        $this->contentLength = ord($data[4]) * 256 + ord($data[5]);
+        $this->requestId = (ord($data[2]) << 8) + ord($data[3]);
+        $this->contentLength = (ord($data[4]) << 8) + ord($data[5]);
         $this->paddingLength = ord($data[6]);
 
         if($this->contentLength > 0)
@@ -57,18 +57,18 @@ class FastCGIRecord
                 $namelen = ord($data[$offset++]);
                 if($namelen > 127)
                 {
-                    $namelen = (($namelen & 0x7f) * 16777216) +
-                                (ord($data[$offset++]) * 65536) + 
-                                (ord($data[$offset++]) * 256) + 
+                    $namelen = (($namelen & 0x7f) << 24) +
+                                (ord($data[$offset++]) << 16) + 
+                                (ord($data[$offset++]) << 8) + 
                                 ord($data[$offset++]);
                 }
 
                 $valuelen = ord($data[$offset++]);
                 if($valuelen > 127)
                 {
-                    $valuelen = (($valuelen & 0x7f) * 16777216) +
-                                (ord($data[$offset++]) * 65536) + 
-                                (ord($data[$offset++]) * 256) + 
+                    $valuelen = (($valuelen & 0x7f) << 24) +
+                                (ord($data[$offset++]) << 16) + 
+                                (ord($data[$offset++]) << 8) + 
                                 ord($data[$offset++]);
                 }
 
