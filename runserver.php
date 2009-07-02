@@ -1,4 +1,5 @@
 <?
+require_once("phastcgi/error_handler.php");
 require_once("phastcgi/fastcgi.php");
 require_once("settings.php");
 
