@@ -16,15 +16,11 @@ while($conn = socket_accept($s))
 {
     $request = new FastCGIRequest($conn);
 
-    foreach($middlewares as $middleware)
-    {
-        $response = $middleware->BeforeRequest($request);
-        print $response;
-    }
+    var_dump($request);
 
     $rec = new FastCGIRecord($conn);
     $rec->type = FCGI_STDOUT;
-    $rec->add_data("Content-type: text/plain\r\n\r\nhello world");
+    $rec->add_data("Content-type: text/plain\r\n\r\n");
     $rec->write($conn);
 
     $rec = new FastCGIRecord($conn);
@@ -35,6 +31,3 @@ while($conn = socket_accept($s))
     $rec->type = FCGI_END_REQUEST;
     $rec->write($conn);
 }
-
-
-
