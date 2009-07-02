@@ -17,16 +17,16 @@ while($conn = socket_accept($s))
 
     var_dump($request);
 
-    $rec = new FastCGIRecord();
+    $rec = new FastCGIRecord($conn);
     $rec->type = FCGI_STDOUT;
     $rec->add_data("Content-type: text/plain\r\n\r\n");
     $rec->write($conn);
 
-    $rec = new FastCGIRecord();
+    $rec = new FastCGIRecord($conn);
     $rec->type = FCGI_STDOUT;
     $rec->write($conn);
 
-    $rec = new FastCGIRecord();
+    $rec = new FastCGIRecord($conn);
     $rec->type = FCGI_END_REQUEST;
     $rec->write($conn);
 }
