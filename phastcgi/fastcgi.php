@@ -14,6 +14,7 @@ define(FCGI_UNKNOWN_TYPE, 11);
 define(FCGI_MAXTYPE, FCGI_UNKNOWN_TYPE);
 define(FCGI_NULL_REQUEST_ID, 0);
 
+define(FCGI_VERSION_1, 1);
 define(FCGI_KEEP_CONN, 1);
 
 define(FCGI_RESPONDER, 1);
@@ -27,7 +28,17 @@ define(FCGI_UNKNOWN_ROLE, 3);
 
 class FastCGIRecord
 {
-    public function __construct($s)
+    public function __construct()
+    {
+        $this->version = FCGI_VERSION_1;
+        $this->contentLengthB0 = 0;
+        $this->contentLengthB1 = 0;
+        $this->type = FCGI_UNKNOWN_TYPE;
+        $this->paddingLength = 0;
+
+        $this->contentLength = 0;
+    }
+    public function read($s)
     {
         $data = socket_read($s, 8);
         $this->type = ord($data[1]);
@@ -69,6 +80,27 @@ class FastCGIRecord
             }
         }
     }
+
+    public function write($s)
+    {
+        socket_write($s, 
+            chr($this->version).
+            chr($this->type)."\x00\x00".
+            chr($this->contentLengthB1).
+            chr($this->contentLengthB0).
+            chr($this->paddingLength).
+            0x00);
+        if($this->contentLength > 0)
+            socket_write($s, $this->data);
+    }
+
+    public function add_data($data)
+    {
+        $this->data .= $data;
+        $this->contentLength = strlen($data);
+        $this->contentLengthB0 = $this->contentLength & 0xff;
+        $this->contentLengthB1 = $this->contentLength >> 8 & 0xff;
+    }
 }
 
 class FastCGIRequest
@@ -76,7 +108,8 @@ class FastCGIRequest
     public function __construct($s)
     {
         do {
-            $rec = new FastCGIRecord($s);
+            $rec = new FastCGIRecord();
+            $rec->read($s);
             var_dump($rec);
         } while ($rec->type != FCGI_STDIN);
     }
