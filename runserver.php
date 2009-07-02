@@ -21,16 +21,16 @@ while($conn = socket_accept($s))
         print $response;
     }
 
-    $rec = new FastCGIRecord();
+    $rec = new FastCGIRecord($conn);
     $rec->type = FCGI_STDOUT;
     $rec->add_data("Content-type: text/plain\r\n\r\nhello world");
     $rec->write($conn);
 
-    $rec = new FastCGIRecord();
+    $rec = new FastCGIRecord($conn);
     $rec->type = FCGI_STDOUT;
     $rec->write($conn);
 
-    $rec = new FastCGIRecord();
+    $rec = new FastCGIRecord($conn);
     $rec->type = FCGI_END_REQUEST;
     $rec->write($conn);
 }

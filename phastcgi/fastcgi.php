@@ -28,8 +28,14 @@ define(FCGI_UNKNOWN_ROLE, 3);
 
 class FastCGIRecord
 {
-    public function __construct()
+	/**
+	* Socket stream	
+	*/
+	private static $sock;  
+	
+    public function __construct($sock)
     {
+		$this->sock = $sock;
         $this->version = FCGI_VERSION_1;
         $this->contentLengthB0 = 0;
         $this->contentLengthB1 = 0;
@@ -38,16 +44,16 @@ class FastCGIRecord
 
         $this->contentLength = 0;
     }
-    public function read($s)
+    public function read()
     {
-        $data = socket_read($s, 8);
+        $data = socket_read($this->sock, 8);
         $this->type = ord($data[1]);
         $this->requestId = (ord($data[2]) << 8) + ord($data[3]);
         $this->contentLength = (ord($data[4]) << 8) + ord($data[5]);
         $this->paddingLength = ord($data[6]);
 
         if($this->contentLength > 0)
-            $data = socket_read($s, $this->contentLength);
+            $data = socket_read($this->sock, $this->contentLength);
 
         if($this->type == FCGI_PARAMS)
         {
@@ -81,9 +87,9 @@ class FastCGIRecord
         }
     }
 
-    public function write($s)
+    public function write()
     {
-        socket_write($s, 
+        socket_write($this->sock, 
             chr($this->version).
             chr($this->type)."\x00\x00".
             chr($this->contentLengthB1).
@@ -91,7 +97,7 @@ class FastCGIRecord
             chr($this->paddingLength).
             0x00);
         if($this->contentLength > 0)
-            socket_write($s, $this->data);
+            socket_write($this->sock, $this->data);
     }
 
     public function add_data($data)
@@ -108,8 +114,8 @@ class FastCGIRequest
     public function __construct($s)
     {
         do {
-            $rec = new FastCGIRecord();
-            $rec->read($s);
+            $rec = new FastCGIRecord($s);
+            $rec->read();
             var_dump($rec);
         } while ($rec->type != FCGI_STDIN);
     }
