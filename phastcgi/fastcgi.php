@@ -110,10 +110,6 @@ class FastCGIRequest
         do {
             $rec = new FastCGIRecord();
             $rec->read($s);
-            var_dump($rec);
         } while ($rec->type != FCGI_STDIN);
     }
 }
-
-
-
