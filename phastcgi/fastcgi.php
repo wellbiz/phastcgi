@@ -31,7 +31,8 @@ class FastCGIRecord
 	/**
 	* Socket stream	
 	*/
-	private static $sock;  
+	private static $sock;
+    public $params;
 	
     public function __construct($sock)
     {
