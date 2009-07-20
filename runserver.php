@@ -18,16 +18,9 @@ while($conn = socket_accept($s))
 
     var_dump($request);
 
-    $rec = new FastCGIRecord($conn);
-    $rec->type = FCGI_STDOUT;
-    $rec->add_data("Content-type: text/plain\r\n\r\nhello world");
-    $rec->write();
-
-    $rec = new FastCGIRecord($conn);
-    $rec->type = FCGI_STDOUT;
-    $rec->write();
-
-    $rec = new FastCGIRecord($conn);
-    $rec->type = FCGI_END_REQUEST;
-    $rec->write();
+    $reply = new FastCGIReply($conn);
+    $reply->add_header("Content-type", "text/plain");
+    $reply->send_data("Hello World\n");
+    $reply->send_data("Yohoho");
+    $reply->end_request();
 }

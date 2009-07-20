@@ -31,12 +31,13 @@ class FastCGIRecord
 	/**
 	* Socket stream	
 	*/
-	private static $sock;
+	private $sock;
     public $params;
+    public $data = "";
 	
     public function __construct($sock)
     {
-		self::$sock = $sock;
+		$this->sock = $sock;
         $this->version = FCGI_VERSION_1;
         $this->contentLengthB0 = 0;
         $this->contentLengthB1 = 0;
@@ -47,14 +48,14 @@ class FastCGIRecord
     }
     public function read()
     {
-        $data = socket_read(self::$sock, 8);
+        $data = socket_read($this->sock, 8);
         $this->type = ord($data[1]);
         $this->requestId = (ord($data[2]) << 8) + ord($data[3]);
         $this->contentLength = (ord($data[4]) << 8) + ord($data[5]);
         $this->paddingLength = ord($data[6]);
 
         if($this->contentLength > 0)
-            $data = socket_read(self::$sock, $this->contentLength);
+            $data = socket_read($this->sock, $this->contentLength);
 
         if($this->type == FCGI_PARAMS)
         {
@@ -90,7 +91,12 @@ class FastCGIRecord
 
     public function write()
     {
-        socket_write(self::$sock, 
+
+        $this->contentLength = strlen($this->data);
+        $this->contentLengthB0 = $this->contentLength & 0xff;
+        $this->contentLengthB1 = $this->contentLength >> 8 & 0xff;
+
+        socket_write($this->sock, 
             chr($this->version).
             chr($this->type)."\x00\x00".
             chr($this->contentLengthB1).
@@ -98,15 +104,8 @@ class FastCGIRecord
             chr($this->paddingLength).
             0x00);
         if($this->contentLength > 0)
-            socket_write(self::$sock, $this->data);
-    }
-
-    public function add_data($data)
-    {
-        $this->data .= $data;
-        $this->contentLength = strlen($data);
-        $this->contentLengthB0 = $this->contentLength & 0xff;
-        $this->contentLengthB1 = $this->contentLength >> 8 & 0xff;
+            socket_write($this->sock, $this->data);
+        print 'ok';
     }
 }
 
@@ -124,3 +123,56 @@ class FastCGIRequest
         } while ($rec->type != FCGI_STDIN);
     }
 }
+
+class FastCGIReply
+{
+    public function __construct($s)
+    {
+        $this->sock = $s;
+    }
+
+    public function add_header($key, $value)
+    {
+        $this->headers[$key] = $value;
+    }
+
+    public function send_headers()
+    {
+        $record = new FastCGIRecord($this->sock);
+        $record->type = FCGI_STDOUT;
+        foreach($this->headers as $key => $value)
+        {
+            $record->data .= $key.": ".$value."\r\n";
+            print $key.": ".$value."\r\n";
+        }
+        $record->data .= "\r\n";
+        $record->write();
+        $this->headers_sent = true;
+    }
+
+    public function send_data($data)
+    {
+        if(!isset($this->headers_sent))
+            $this->send_headers();
+
+        $record = new FastCGIRecord($this->sock);
+        $record->type = FCGI_STDOUT;
+        $record->data = $data;
+        $record->write();
+    }
+
+    public function end_request()
+    {
+//        $this->send_data("");
+
+        $record = new FastCGIRecord($this->sock);
+        $record->type = FCGI_STDOUT;
+        $record->write();
+
+
+        $record = new FastCGIRecord($this->sock);
+        $record->type = FCGI_END_REQUEST;
+        $record->write();
+    }
+}
+
