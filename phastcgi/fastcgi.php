@@ -171,6 +171,7 @@ class FastCGIReply
 
         $record = new FastCGIRecord($this->sock);
         $record->type = FCGI_END_REQUEST;
+        $record->data = "\x00\x00\x00\x00\x00\x00\x00\x00";
         $record->write();
     }
 }
