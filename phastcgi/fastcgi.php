@@ -96,7 +96,7 @@ class FastCGIRecord
         $this->contentLengthB0 = $this->contentLength & 0xff;
         $this->contentLengthB1 = $this->contentLength >> 8 & 0xff;
 
-        socket_write($this->sock, 
+        socket_write($this->sock,
             chr($this->version).
             chr($this->type)."\x00\x00".
             chr($this->contentLengthB1).
@@ -105,7 +105,6 @@ class FastCGIRecord
             0x00);
         if($this->contentLength > 0)
             socket_write($this->sock, $this->data);
-        print 'ok';
     }
 }
 
