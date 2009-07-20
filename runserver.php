@@ -4,7 +4,9 @@ require_once("phastcgi/fastcgi.php");
 require_once("settings.php");
 
 $sn = '/tmp/tst.sock';
-unlink($sn);
+if (is_file($sn)){
+    unlink($sn);
+}
 $s = socket_create(AF_UNIX, SOCK_STREAM, 0);
 
 socket_bind($s, $sn);
