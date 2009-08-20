@@ -1,5 +1,6 @@
 <?
 
+
 class FastCGIReply
 {
     public function __construct($request)
@@ -7,13 +8,23 @@ class FastCGIReply
         $this->request = $request;
     }
 
-    public function send($connection)
+    public function send_reply($connection, $application)
     {
         $record = new FastCGIRecord();
         $record->requestId = $this->request->requestId;
         $record->type = FCGI_STDOUT;
-        $record->data = "Content-type: text/html\r\n\r\nlol ok";
+
+        $record->data = "Content-type: text/html\r\n\r\n";
         $record->send($connection);
+
+
+        $data = $application->get_data($this->request);
+
+        for($i=0; $i<strlen($data);$i += 16300)
+        {
+            $record->data = substr($data, $i, 16300);
+            $record->send($connection);
+        }
 
         $record->data = "";
         $record->send($connection);
