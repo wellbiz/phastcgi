@@ -19,10 +19,7 @@ class FastCGIRecord
         $data = socket_read($connection, 8);
 
         if($data === "")
-        {
-            $err = socket_last_error($connection);
-            return(TRUE);
-        }
+            return(true);
 
         $headers = unpack(
             "Cversion/".
@@ -87,13 +84,11 @@ class FastCGIRecord
 
         $this->contentLength = strlen($this->data);
 
-        $data = pack("CCnnCC",
+        $data = pack("CCnnxx",
                 $this->version,
                 $this->type,
                 $this->requestId,
-                $this->contentLength,
-                0,
-                0
+                $this->contentLength
             );
 
         $bytes = socket_write($connection, $data.$this->data, $this->contentLength + 8);

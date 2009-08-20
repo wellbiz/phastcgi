@@ -18,7 +18,7 @@ $requests = array();
 $responders = array();
 
 $requests = array();
-$maxpids = 16;
+$maxpids = 4;
 $pids = array();
 
 require_once("demo/Application.php");
@@ -28,13 +28,14 @@ function handle_connection($s)
 {
 
     $application = new Application();
+    $record = new FastCGIRecord();
+
     var_dump($s);
 
     $requests = array();
     while($connection = socket_accept($s))
     while(1)
     {
-        $record = new FastCGIRecord();
         $error = $record->read($connection);
 
         if($error)

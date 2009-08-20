@@ -10,6 +10,7 @@ class Application
     public function get_data($request)
     {
 #        $res = mysql_query("INSERT INTO test SET num={$request->requestId}, text='ololo ololo'");
+
         $res = mysql_query("SELECT * FROM test");
         ob_start();
         ?><table><?
