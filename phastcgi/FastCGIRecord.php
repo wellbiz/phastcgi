@@ -17,12 +17,30 @@ class FastCGIRecord
     public function read($connection)
     {
         $data = socket_read($connection, 8);
+
         if($data === "")
+        {
+            $err = socket_last_error($connection);
             return(TRUE);
-        $this->type = ord($data[1]);
-        $this->requestId = (ord($data[2]) << 8) + ord($data[3]);
-        $this->contentLength = (ord($data[4]) << 8) + ord($data[5]);
-        $this->paddingLength = ord($data[6]);
+        }
+
+        $headers = unpack(
+            "Cversion/".
+            "Ctype/".
+            "nrequestId/".
+            "ncontentLength/".
+            "CpaddingLength/".
+            "Creserved/"
+            , $data);
+
+#        hexdump($data);
+
+        if($headers['paddingLength'] > 0)
+            socket_read($connection, $headers['paddingLength']);
+
+        $this->type = $headers['type'];
+        $this->requestId = $headers['requestId'];
+        $this->contentLength = $headers['contentLength'];
 
         if($this->contentLength > 0)
             $data = socket_read($connection, $this->contentLength);
@@ -69,15 +87,20 @@ class FastCGIRecord
 
         $this->contentLength = strlen($this->data);
 
-        $data = pack("CCnnnC",
+        $data = pack("CCnnCC",
                 $this->version,
                 $this->type,
                 $this->requestId,
                 $this->contentLength,
-                $this->paddingLength,
+                0,
                 0
             );
-        socket_write($connection, $data . $this->data);
+
+        $bytes = socket_write($connection, $data.$this->data, $this->contentLength + 8);
+
+#        hexdump($data.$this->data);
+
+#        print "$bytes sent\n";
     }
 }
 

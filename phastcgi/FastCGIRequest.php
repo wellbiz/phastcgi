@@ -26,9 +26,4 @@ class FastCGIRequest
         return FALSE;
     }
 
-    public function get_response()
-    {
-        return "ok\n";
-    }
 }
-
