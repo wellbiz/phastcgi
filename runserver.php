@@ -22,7 +22,6 @@ $pids = array();
 
 require_once("demo/Application.php");
 
-
 function handle_connection($s)
 {
 
@@ -58,13 +57,10 @@ function handle_connection($s)
         {
             $requests[$record->requestId] = new FastCGIRequest($record);
         }
-//        echo "len ".sizeof($requests)."\n";
-
     }
 }
 
 
-#while($connection = socket_accept($s))
 while(1)
 {
     $pid = pcntl_fork();
@@ -83,74 +79,4 @@ while(1)
         if(array_key_exists($pid, $pids))
             unset($pids[$pid]);
     } while($pid > 0);
-
 }
-    
-
-/*
-        $reads = array($connection);
-        $writes = empty($responders) ? array() : array($connection);
-        $excepts = array($connection);
-
-        socket_select($reads, $writes, $excepts, 0);
-        echo "reads: ";
-        var_dump($reads);
-
-        if(!empty($excepts))
-        {
-            print "Excepts\n";
-            continue;
-        }
-
-        if(!empty($writes))
-        {
-            print "Writes\n";
-            var_dump($writes);
-            foreach($responders as $responder)
-            {
-                $reply = new FastCGIReply($responder->requestId);
-                $response = $reply->get_response("lol ok");
-
-                var_dump($response);
-                if($response === NULL)
-                {
-                    socket_write($connection, FastCGIReply::end_request($responder->requestId), 16);
-                }
-                else
-                {
-                    $bytes = socket_write($connection, $response->get_raw_data());
-                    print "$bytes written\n";
-                }
-            }
-            continue;
-        }
-
-        
-        if(!empty($reads))
-        {
-
-            $record = new FastCGIRecord();
-            $record->read($connection);
-            print "type: " . $record->type . "\n";
-
-            if($record->type === FCGI_BEGIN_REQUEST)
-            {
-                $requests[$record->requestId] = new FastCGIRequest($record);
-            }
-            elseif($record->type === FCGI_STDIN and $record->contentLength === 0)
-            {
-                print "end of request\n";
-                array_push($responders, $requests[$record->requestId]);
-                unset($requests[$record->requestId]);
-            }
-            else
-            {
-                $requests[$record->requestId]->process_record($record);
-            }
-        }
-
-
-    }
-
-}
-*/
