@@ -30,22 +30,18 @@ class FastCGIRecord
             "Creserved/"
             , $data);
 
-#        hexdump($data);
-
-        if($headers['paddingLength'] > 0)
-            socket_read($connection, $headers['paddingLength']);
 
         $this->type = $headers['type'];
         $this->requestId = $headers['requestId'];
         $this->contentLength = $headers['contentLength'];
 
         if($this->contentLength > 0)
-            $data = socket_read($connection, $this->contentLength);
+            $data = socket_read($connection, $this->contentLength + $headers['paddingLength']);
 
         if($this->type == FCGI_PARAMS)
         {
             $offset = 0;
-            while($offset < $this->contentLength)
+            while($offset + $headers['paddingLength'] < $this->contentLength)
             {
                 $namelen = ord($data[$offset++]);
                 if($namelen > 127)

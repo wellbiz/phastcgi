@@ -18,7 +18,7 @@ $requests = array();
 $responders = array();
 
 $requests = array();
-$maxpids = 4;
+$maxpids = 1;
 $pids = array();
 
 require_once("demo/Application.php");
@@ -86,7 +86,6 @@ while(1)
             unset($pids[$pid]);
     } while($pid > 0);
 
-        
 }
     
 
