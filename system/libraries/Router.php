@@ -45,6 +45,11 @@ class CI_Router {
 	 */
 	function CI_Router()
 	{
+		include(APPPATH.'config/routes'.EXT);
+		$this->routes = ( ! isset($route) OR ! is_array($route)) ? array() : $route;
+		$this->default_controller = ( ! isset($this->routes['default_controller']) 
+            OR $this->routes['default_controller'] == '') ? FALSE : strtolower($this->routes['default_controller']);	
+
 		$this->config =& load_class('Config');
 		$this->uri =& load_class('URI');
 		$this->_set_routing();
@@ -64,6 +69,7 @@ class CI_Router {
 	 */
 	function _set_routing()
 	{
+        $this->uri->segments = array();
 		// Are query strings enabled in the config file?
 		// If so, we're done since segment based URIs are not used with query strings.
 		if ($this->config->item('enable_query_strings') === TRUE AND isset($_GET[$this->config->item('controller_trigger')]))
@@ -77,15 +83,6 @@ class CI_Router {
 			
 			return;
 		}
-		
-		// Load the routes.php file.
-		@include(APPPATH.'config/routes'.EXT);
-		$this->routes = ( ! isset($route) OR ! is_array($route)) ? array() : $route;
-		unset($route);
-
-		// Set the default controller so we can display it in the event
-		// the URI doesn't correlated to a valid controller.
-		$this->default_controller = ( ! isset($this->routes['default_controller']) OR $this->routes['default_controller'] == '') ? FALSE : strtolower($this->routes['default_controller']);	
 		
 		// Fetch the complete URI string
 		$this->uri->_fetch_uri_string();
@@ -147,7 +144,7 @@ class CI_Router {
 	 * @param	bool
 	 * @return	void
 	 */
-	function _set_request($segments = array())
+	function _set_request($segments)
 	{
 		$segments = $this->_validate_request($segments);
 		
@@ -202,7 +199,6 @@ class CI_Router {
 		{
 			return $segments;
 		}
-
 		// Is the controller in a sub-folder?
 		if (is_dir(APPPATH.'controllers/'.$segments[0]))
 		{		

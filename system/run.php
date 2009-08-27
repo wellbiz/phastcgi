@@ -22,14 +22,12 @@ if ($EXT->_call_hook('cache_override') === FALSE)
 		return;
 	}
 }
-
 $RTR->_set_routing();
 
 // Load the local application controller
 // Note: The Router class automatically validates the controller path.  If this include fails it 
 // means that the default controller in the Routes.php file is not resolving to something valid.
 $fname = APPPATH.'controllers/'.$RTR->fetch_directory().$RTR->fetch_class().EXT;
-echo $fname;
 if ( ! file_exists($fname))
 {
 	show_error("Unable to load your default controller.  Please make sure the controller specified in your Routes.php file is valid.($fname)");

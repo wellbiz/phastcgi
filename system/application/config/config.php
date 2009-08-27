@@ -11,7 +11,8 @@
 |	http://example.com/
 |
 */
-$config['base_url']	= "/phast/";
+$config['base_url']	= "";
+$config['base_uri'] = "/phast/";
 
 /*
 |--------------------------------------------------------------------------

@@ -65,15 +65,18 @@ class CI_URI {
 			// build the URI string from the zero index of the $_GET array.
 			// This avoids having to deal with $_SERVER variables, which
 			// can be unreliable in some environments
+            /*
 			if (is_array($_GET) && count($_GET) == 1 && trim(key($_GET), '/') != '')
 			{
 				$this->uri_string = key($_GET);
 				return;
 			}
+            */
 
 			// Is there a PATH_INFO variable?
 			// Note: some servers seem to have trouble with getenv() so we'll test it two ways
 			$path = (isset($_SERVER['PATH_INFO'])) ? $_SERVER['PATH_INFO'] : @getenv('PATH_INFO');
+            $path = substr($path, strlen($this->config->item('base_uri')));
 			if (trim($path, '/') != '' && $path != "/".SELF)
 			{
 				$this->uri_string = $path;
