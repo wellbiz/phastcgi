@@ -1,7 +1,6 @@
 <?
 #require_once("phastcgi/error_handler.php");
 require_once("phastcgi/fastcgi.php");
-require_once("settings.php");
 
 $sn = '/tmp/tst.sock';
 if (file_exists($sn)){
