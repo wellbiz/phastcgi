@@ -16,6 +16,7 @@ class FastCGIRecord
     }
     public function read($connection)
     {
+        $this->data = "";
         $data = socket_read($connection, 8);
 
         if($data === "")
@@ -68,11 +69,11 @@ class FastCGIRecord
                 $this->params[$name] = $value;
             }
         }
-        if($this->type == FCGI_STDIN)
+        if($this->type == FCGI_STDIN and $this->contentLength > 0)
         {
-            $this->data = socket_read($connection, $this->contentLength);
+            $this->data = substr($data, 0, $this->contentLength);
         }
-        return FALSE;
+        return false;
     }
 
     public function send($connection)

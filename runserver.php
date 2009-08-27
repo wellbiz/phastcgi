@@ -17,7 +17,7 @@ $requests = array();
 $responders = array();
 
 $requests = array();
-$maxpids = 1;
+$maxpids = 4;
 $pids = array();
 
 require_once("demo/Application.php");
@@ -48,7 +48,6 @@ function handle_connection($s)
             $is_last = $requests[$record->requestId]->process_record($record);
             if($is_last)
             {
-#                print "last\n";
                 $reply = new FastCGIReply($requests[$record->requestId]);
                 $reply->send_reply($connection, $application);
                 socket_close($connection);

@@ -18,12 +18,30 @@ class FastCGIRequest
         }
         elseif($record->type == FCGI_STDIN)
         {
-            if($record->data === FALSE)
-            {
+            if(!$record->data)
                 return TRUE;
+
+            if(array_key_exists('HTTP_CONTENT_TYPE', $this->headers))
+            {
+                switch($this->headers['HTTP_CONTENT_TYPE'])
+                {
+                    case 'application/x-www-form-urlencoded':
+                        $_POST = $this->parse_form_data($record->data);
+                }
             }
+            $this->data = $record->data;
         }
         return FALSE;
+    }
+    private function parse_form_data($data)
+    {
+        $form_data = array();
+        foreach(explode('&', $data) as $line)
+        {
+            list($name, $value) = explode('=', $line);
+            $form_data[$name] = $value;
+        }
+        return $form_data;
     }
 
 }

@@ -4,7 +4,8 @@ class Test extends Controller {
 
 	function index()
 	{
-        echo '123';
+        $this->load->helper('form');
+        $this->load->view('form');
 	}
 }
 
