@@ -20,12 +20,10 @@ $requests = array();
 $maxpids = 4;
 $pids = array();
 
-require_once("demo/Application.php");
+$reply = new FastCGIReply();
 
 function handle_connection($s)
 {
-
-    $application = new Application();
     $record = new FastCGIRecord();
 
     var_dump($s);
@@ -47,8 +45,8 @@ function handle_connection($s)
             $is_last = $requests[$record->requestId]->process_record($record);
             if($is_last)
             {
-                $reply = new FastCGIReply($requests[$record->requestId]);
-                $reply->send_reply($connection, $application);
+                global $reply;
+                $reply->send_reply($requests[$record->requestId], $connection);
                 socket_close($connection);
                 break;
             }
