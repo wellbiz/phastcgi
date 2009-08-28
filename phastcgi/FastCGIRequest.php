@@ -15,6 +15,11 @@ class FastCGIRequest
         if ($record->type === FCGI_PARAMS and is_array($record->params))
         {
             $this->headers = array_merge($this->headers, $record->params);
+            if(array_key_exists('HTTP_COOKIE', $record->params))
+            {
+                $p = explode('=', $record->params['HTTP_COOKIE']); #TODO: urldecode
+                $_COOKIE[$p[0]] = $p[1];
+            }
         }
         elseif($record->type == FCGI_STDIN)
         {
@@ -35,6 +40,7 @@ class FastCGIRequest
     }
     private function parse_form_data($data)
     {
+        # TODO: urldecode
         $form_data = array();
         foreach(explode('&', $data) as $line)
         {
@@ -43,5 +49,4 @@ class FastCGIRequest
         }
         return $form_data;
     }
-
 }

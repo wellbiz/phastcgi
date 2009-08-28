@@ -44,7 +44,7 @@
  */
 if ( ! function_exists('set_cookie'))
 {
-	function set_cookie($name = '', $value = '', $expire = '', $domain = '', $path = '/', $prefix = '')
+	function set_cookie($name = '', $value = '', $expire = 0, $domain = '', $path = '/', $prefix = '')
 	{
 		if (is_array($name))
 		{		
@@ -73,23 +73,13 @@ if ( ! function_exists('set_cookie'))
 			$path = $CI->config->item('cookie_path');
 		}
 		
-		if ( ! is_numeric($expire))
+    	if ($expire > 0)
 		{
-			$expire = time() - 86500;
-		}
-		else
-		{
-			if ($expire > 0)
-			{
-				$expire = time() + $expire;
-			}
-			else
-			{
-				$expire = 0;
-			}
+			$expire = time() + $expire;
 		}
 	
-		setcookie($prefix.$name, $value, $expire, $path, $domain, 0);
+		#setcookie($prefix.$name, $value, $expire, $path, $domain, 0);
+        FastCGIReply::$cookies[] = array($prefix.$name, $value, $expire, $path, $domain, 0);
 	}
 }
 	

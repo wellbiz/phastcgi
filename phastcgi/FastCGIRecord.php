@@ -41,6 +41,7 @@ class FastCGIRecord
 
         if($this->type == FCGI_PARAMS)
         {
+            $this->params = array();
             $offset = 0;
             while($offset + $headers['paddingLength'] < $this->contentLength)
             {
