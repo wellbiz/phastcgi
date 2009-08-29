@@ -60,10 +60,7 @@ if ( ! function_exists('set_cookie'))
 		// Set the config file options
 		$CI =& get_instance();
 	
-		if ($prefix == '' AND $CI->config->item('cookie_prefix') != '')
-		{
-			$prefix = $CI->config->item('cookie_prefix');
-		}
+
 		if ($domain == '' AND $CI->config->item('cookie_domain') != '')
 		{
 			$domain = $CI->config->item('cookie_domain');
@@ -72,15 +69,15 @@ if ( ! function_exists('set_cookie'))
 		{
 			$path = $CI->config->item('cookie_path');
 		}
-		
     	if ($expire > 0)
 		{
 			$expire = time() + $expire;
 		}
 	
+		$prefix = $CI->config->item('cookie_prefix');
 		#setcookie($prefix.$name, $value, $expire, $path, $domain, 0);
         FastCGIReply::$cookies[] = array($prefix.$name, $value, $expire, $path, $domain, 0);
-	}
+    }
 }
 	
 // --------------------------------------------------------------------

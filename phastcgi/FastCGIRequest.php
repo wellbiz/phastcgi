@@ -17,8 +17,12 @@ class FastCGIRequest
             $this->headers = array_merge($this->headers, $record->params);
             if(array_key_exists('HTTP_COOKIE', $record->params))
             {
-                $p = explode('=', $record->params['HTTP_COOKIE']); #TODO: urldecode
-                $_COOKIE[$p[0]] = $p[1];
+                foreach(explode(';', $record->params['HTTP_COOKIE']) as $coo)
+                {
+                    #TODO: urldecode or something
+                    $nameval = explode('=', trim($coo));
+                    $_COOKIE[$nameval[0]] = $nameval[1];
+                }
             }
         }
         elseif($record->type == FCGI_STDIN)

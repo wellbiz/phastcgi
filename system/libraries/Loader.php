@@ -764,7 +764,7 @@ class CI_Loader {
 				}
 
 				// Safety:  Was the class already loaded by a previous call?
-				if (in_array($subclass, $this->_ci_loaded_files))
+/*				if (in_array($subclass, $this->_ci_loaded_files))
 				{
 					// Before we deem this to be a duplicate request, let's see
 					// if a custom object name is being supplied.  If so, we'll
@@ -782,7 +782,7 @@ class CI_Loader {
 					log_message('debug', $class." class already loaded. Second attempt ignored.");
 					return;
 				}
-	
+*/	
 				include_once($baseclass);				
 				include_once($subclass);
 				$this->_ci_loaded_files[] = $subclass;
@@ -804,6 +804,7 @@ class CI_Loader {
 				}
 				
 				// Safety:  Was the class already loaded by a previous call?
+                /*
 				if (in_array($filepath, $this->_ci_loaded_files))
 				{
 					// Before we deem this to be a duplicate request, let's see
@@ -822,6 +823,7 @@ class CI_Loader {
 					log_message('debug', $class." class already loaded. Second attempt ignored.");
 					return;
 				}
+                */
 				
 				include_once($filepath);
 				$this->_ci_loaded_files[] = $filepath;
