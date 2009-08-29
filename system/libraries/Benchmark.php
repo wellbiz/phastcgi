@@ -105,6 +105,25 @@ class CI_Benchmark {
 		return '{memory_usage}';
 	}
 
+    function show_times()
+    {
+        $old = 0;
+
+        ?><table><?
+
+        foreach($this->marker as $name => $value)
+        {
+            $values = explode(' ', $value);
+            $value = (float)$values[0] + (float)$values[1];
+            if($old == 0)
+                $old = $value;
+            printf("<tr><td>%s<td>%05f</tr>", $name, $value - $old);
+            $old = $value;
+        }
+
+        ?></table><?
+    }
+
 }
 
 // END CI_Benchmark class

@@ -8,6 +8,8 @@ global $EXT;
 global $OUT;
 global $IN;
 global $LANG;
+global $CONTROLLERS;
+
 
 /*
  * ------------------------------------------------------
@@ -77,7 +79,14 @@ $EXT->_call_hook('pre_controller');
 // Mark a start point so we can benchmark the controller
 $BM->mark('controller_execution_time_( '.$class.' / '.$method.' )_start');
 
-$CI = new $class();
+if(array_key_exists($class, $CONTROLLERS))
+    $CI = $CONTROLLERS[$class];
+else
+{
+    $CI = new $class();
+    $CONTROLLERS[$class] = $CI;
+}
+$BM->mark('new');
 
 // Is this a scaffolding request?
 if ($RTR->scaffolding_request === TRUE)
@@ -112,7 +121,10 @@ else
 
 		// Call the requested method.
 		// Any URI segments present (besides the class/function) will be passed to the method for convenience
+
+#        $BM->mark('1');
 		call_user_func_array(array(&$CI, $method), array_slice($URI->rsegments, 2));
+#        $BM->mark('2');
 	}
 }
 
@@ -154,6 +166,10 @@ if (class_exists('CI_DB') AND isset($CI->db))
 	$CI->db->close();
 }
 
+?><br><?
+
+#$BM->show_times();
+$BM->marker = array();
 
 /* End of file CodeIgniter.php */
 /* Location: ./system/codeigniter/CodeIgniter.php */
