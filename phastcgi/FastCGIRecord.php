@@ -1,5 +1,4 @@
 <?
-
 class FastCGIRecord
 {
 	private $sock;
@@ -30,7 +29,6 @@ class FastCGIRecord
             "CpaddingLength/".
             "Creserved/"
             , $data);
-
 
         $this->type = $headers['type'];
         $this->requestId = $headers['requestId'];
@@ -79,20 +77,16 @@ class FastCGIRecord
 
     public function send($connection)
     {
-
         $this->contentLength = strlen($this->data);
-
         $data = pack("CCnnxx",
                 $this->version,
                 $this->type,
                 $this->requestId,
                 $this->contentLength
             );
-
         $bytes = socket_write($connection, $data.$this->data, $this->contentLength + 8);
 
 #        hexdump($data.$this->data);
-
 #        print "$bytes sent\n";
     }
 }

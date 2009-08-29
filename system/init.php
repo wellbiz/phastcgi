@@ -218,4 +218,4 @@ $GLOBALS['URI'] = $URI;
 $GLOBALS['IN'] = $IN;
 $GLOBALS['OUT'] = $OUT;
 $GLOBALS['CFG'] = $CFG;
-
+$GLOBALS['CONTROLLERS'] = array();

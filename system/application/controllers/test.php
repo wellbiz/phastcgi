@@ -7,10 +7,9 @@ class Test extends Controller {
         parent::__construct();
 
         $this->load->helper('form');
+        $BM->mark('form');
         $this->load->helper('cookie');
         $this->load->library('session');
-
-        echo 'constr';
     }
 
 	function index()
