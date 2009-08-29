@@ -77,6 +77,7 @@ if ( ! function_exists('set_cookie'))
 		$prefix = $CI->config->item('cookie_prefix');
 		#setcookie($prefix.$name, $value, $expire, $path, $domain, 0);
         FastCGIReply::$cookies[] = array($prefix.$name, $value, $expire, $path, $domain, 0);
+#        var_dump(FastCGIReply::$cookies);
     }
 }
 	

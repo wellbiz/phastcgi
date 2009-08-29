@@ -67,7 +67,6 @@ class CI_Session {
 
 		// Load the string helper so we can use the strip_slashes() function
 		$this->CI->load->helper('string');
-		$this->CI->load->helper('cookie');
 
 		// Do we need encryption? If so, load the encryption class
 		if ($this->sess_encrypt_cookie == TRUE)
@@ -188,7 +187,6 @@ class CI_Session {
 			$this->sess_destroy();
 			return FALSE;
 		}
-
 		// Is there a corresponding session in the DB?
 		if ($this->sess_use_database === TRUE)
 		{
@@ -231,8 +229,6 @@ class CI_Session {
 
 		// Session is valid!
 		$this->userdata = $session;
-		unset($session);
-
 		return TRUE;
 	}
 
@@ -397,13 +393,14 @@ class CI_Session {
 			$this->CI->db->where('session_id', $this->userdata['session_id']);
 			$this->CI->db->delete($this->sess_table_name);
 		}
+
 		// Kill the cookie
 		set_cookie(
 					$this->sess_cookie_name,
 					addslashes(serialize(array())),
-					($this->now - 31500000),
-					$this->cookie_path,
+					- 31500000,
 					$this->cookie_domain,
+					$this->cookie_path,
 					0
 				);
 	}
@@ -650,15 +647,17 @@ class CI_Session {
 			// if encryption is not used, we provide an md5 hash to prevent userside tampering
 			$cookie_data = $cookie_data.md5($cookie_data.$this->encryption_key);
 		}
+
 		// Set the cookie
-		set_cookie(
-					$this->sess_cookie_name,
-					$cookie_data,
-					$this->sess_expiration,
-					$this->cookie_domain,
-					$this->cookie_path,
-					0
-				);
+        set_cookie(
+            $this->sess_cookie_name,
+            $cookie_data,
+            $this->sess_expiration,
+            $this->cookie_domain,
+            $this->cookie_path,
+            0
+        );
+
 	}
 
 	// --------------------------------------------------------------------

@@ -86,7 +86,7 @@ else
     $CI = new $class();
     $CONTROLLERS[$class] = $CI;
 }
-$BM->mark('new');
+#$BM->mark('new');
 
 // Is this a scaffolding request?
 if ($RTR->scaffolding_request === TRUE)
@@ -168,7 +168,7 @@ if (class_exists('CI_DB') AND isset($CI->db))
 
 ?><br><?
 
-#$BM->show_times();
+$BM->show_times();
 $BM->marker = array();
 
 /* End of file CodeIgniter.php */

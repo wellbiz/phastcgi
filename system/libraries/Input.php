@@ -246,7 +246,6 @@ class CI_Input {
 		{
 			return $this->xss_clean($array[$index]);
 		}
-
 		return $array[$index];
 	}
 

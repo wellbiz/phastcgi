@@ -145,9 +145,7 @@ class CI_Encrypt {
 		{
 			return FALSE;
 		}
-
 		$dec = base64_decode($string);
-
 		if ($this->_mcrypt_exists === TRUE)
 		{
 			if (($dec = $this->mcrypt_decode($dec, $key)) === FALSE)
@@ -155,7 +153,6 @@ class CI_Encrypt {
 				return FALSE;
 			}
 		}
-
 		return $this->_xor_decode($dec, $key);
 	}
 

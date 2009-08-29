@@ -19,8 +19,8 @@ class FastCGIReply
         $this->record->data = "";
         foreach(self::$cookies as $cookie)
         {
-
-            $this->record->data = "Set-Cookie: {$cookie[0]}={$cookie[1]}";
+            $value = urlencode($cookie[1]);
+            $this->record->data = "Set-Cookie: {$cookie[0]}={$value}";
             if($cookie[2] > 0)
             {
                 $expires = strftime("%a, %d-%b-%Y %T GMT", $cookie[2]);
@@ -40,7 +40,7 @@ class FastCGIReply
 
         $this->record->data .="Content-type: text/html\r\n\r\n";
 
-        echo $this->record->data;
+#        echo $this->record->data;
 
         $this->record->send($connection);
 
@@ -65,8 +65,8 @@ class FastCGIReply
 
     public function get_data($request)
     {
-        echo $request->headers["REMOTE_ADDR"]." ".$request->headers["PATH_INFO"]."\n";
-        #var_dump($request->headers["HTTP_COOKIE"]);
+#        echo $request->headers["REMOTE_ADDR"]." ".$request->headers["PATH_INFO"]."\n";
+#        var_dump($request->headers["HTTP_COOKIE"]);
 
         foreach($_SERVER as $key => $value)
             unset($_SERVER[$key]);

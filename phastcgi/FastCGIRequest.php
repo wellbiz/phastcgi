@@ -21,7 +21,7 @@ class FastCGIRequest
                 {
                     #TODO: urldecode or something
                     $nameval = explode('=', trim($coo));
-                    $_COOKIE[$nameval[0]] = $nameval[1];
+                    $_COOKIE[$nameval[0]] = urldecode($nameval[1]);
                 }
             }
         }
